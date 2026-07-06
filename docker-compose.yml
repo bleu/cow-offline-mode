@@ -151,9 +151,9 @@ services:
       - EIP1271_SKIP_CREATION_VALIDATION=true
       - ENABLE_EIP1271_ORDERS=true
       - PRICE_ESTIMATORS=None
-      - PRICE_ESTIMATION_DRIVERS=baseline|http://driver/baseline
-      - NATIVE_PRICE_ESTIMATORS=baseline|http://driver/baseline
-      - DRIVERS=baseline|http://driver/baseline
+      - PRICE_ESTIMATION_DRIVERS=byos|http://driver/byos
+      - NATIVE_PRICE_ESTIMATORS=byos|http://driver/byos
+      - DRIVERS=byos|http://driver/byos
       - BIND_ADDRESS=0.0.0.0:80
       - BASELINE_SOURCES=UniswapV2
       - TOKEN_OWNER_FINDERS=liquidity
@@ -167,12 +167,12 @@ services:
       - COIN_GECKO_URL=http://coingecko-mock:3000/api/v3/simple/token_price
       - AMOUNT_TO_ESTIMATE_PRICES_WITH=100000000000000000
       - SKIP_TRACE_API=true
-      - SETTLE_INTERVAL=2s          # Optimized: Autopilot runs auctions every 2s instead of 15s
+      - SETTLE_INTERVAL=2s
       - GAS_ESTIMATORS=Native,Web3
       - BLOCK_STREAM_POLL_INTERVAL=1s
       - NATIVE_PRICE_CACHE_MAX_UPDATE_SIZE=100
       - NATIVE_PRICE_CACHE_MAX_AGE=20m
-      - SOLVER_TIME_LIMIT=5         # Solver needs 5s to reliably find solutions
+      - SOLVER_TIME_LIMIT=5
       - RUN_LOOP_NATIVE_PRICE_TIMEOUT=5s
       - NATIVE_PRICE_ESTIMATION_RESULTS_REQUIRED=1
       - DISABLE_ORDER_FILTERING=true
@@ -210,7 +210,7 @@ services:
       - DB_WRITE_URL=postgres://db:5432/?user=${POSTGRES_USER}&password=${POSTGRES_PASSWORD}
       - DB_READ_URL=postgres://db:5432/?user=${POSTGRES_USER}&password=${POSTGRES_PASSWORD}
       - LOG_FILTER=info,autopilot=trace,shared=debug,shared::price_estimation=trace,autopilot::solvable_orders=trace,autopilot::run=trace
-      - DRIVERS=baseline|http://driver/baseline|0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+      - DRIVERS=byos|http://driver/byos|0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
       - OFFLINE_MODE=true
     ports:
       - ${PORT_AUTOPILOT_METRICS:-9589}:9589 # metrics
@@ -301,6 +301,29 @@ services:
       chain:
         condition: service_healthy
 
+  # BYOS (Bring Your Own Solver) engine — built from bleu fork
+  byos:
+    build:
+      context: .
+      dockerfile: Dockerfile.byos
+    restart: always
+    command: ["--config", "/workspace/config/offline/byos.toml"]
+    env_file:
+      - .env
+      - .env.services
+    environment:
+      - ADDR=0.0.0.0:80
+      - LOG=byos=debug
+    volumes:
+      - ./config:/workspace/config
+    ports:
+      - ${PORT_BYOS:-9002}:80
+    depends_on:
+      chain-deployer:
+        condition: service_healthy
+      chain:
+        condition: service_healthy
+
   frontend:
     build:
       context: .
@@ -359,6 +382,17 @@ services:
       - ${PORT_PROMETHEUS:-9090}:9090
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  otterscan:
+    image: otterscan/otterscan:latest
+    restart: always
+    environment:
+      - ERIGON_URL=http://localhost:${PORT_CHAIN:-8545}
+    ports:
+      - ${PORT_OTTERSCAN:-5100}:80
+    depends_on:
+      chain:
+        condition: service_healthy
 
   block-miner:
     image: ghcr.io/foundry-rs/foundry:nightly-1c57854462289b2e71ee7654cd6666217ed86ffd

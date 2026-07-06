@@ -13,6 +13,7 @@
     "test:watch": "jest --watch",
     "set-ports": "npx ts-node scripts/set-ports.ts",
     "order:playground": "npx ts-node scripts/orders/playground-order.ts",
+    "order:byos-test": "npx ts-node scripts/orders/byos-test.ts",
     "order:cowshed": "npx ts-node scripts/orders/cowshed-order.ts",
     "order:composable-cow:twap": "npx ts-node scripts/orders/composable-cow/twap.ts",
     "order:composable-cow:stop-loss": "npx ts-node scripts/orders/composable-cow/stop-loss.ts",

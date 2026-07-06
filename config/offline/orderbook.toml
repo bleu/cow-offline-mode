@@ -1,0 +1,20 @@
+eip1271-skip-creation-validation = true
+bind-address = "0.0.0.0:80"
+
+[shared]
+node-url = "http://chain:8545"
+simulation-node-url = "http://chain:8545"
+
+[shared.contracts]
+gp-v2-settlement = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
+weth = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+
+[database]
+write-url = "postgres://db:5432/?user=postgres&password=123"
+read-url = "postgres://db:5432/?user=postgres&password=123"
+
+[native-price-estimation]
+estimators = [[{ type = "Driver", name = "byos", url = "http://driver/byos" }]]
+
+[order-quoting]
+price-estimation-drivers = [{ name = "byos", url = "http://driver/byos" }]

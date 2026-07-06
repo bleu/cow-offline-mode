@@ -1,0 +1,27 @@
+# Build stage - builds BYOS binary from bleu fork
+FROM docker.io/rust:1-slim-bookworm AS cargo-build
+WORKDIR /src/
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked apt-get update && \
+    apt-get install -y git libssl-dev pkg-config build-essential && \
+    apt-get clean
+
+RUN rustup install stable && \
+    rustup default stable
+
+# Clone and build from bleu fork byos-api branch
+RUN git clone --branch byos-api --depth 1 https://github.com/bleu/cowprotocol-services.git .
+
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/src/target \
+    CARGO_PROFILE_RELEASE_DEBUG=1 cargo build --release -p byos && \
+    cp target/release/byos /
+
+# Minimal runtime image
+FROM docker.io/debian:bookworm-slim
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked apt-get update && \
+    apt-get install -y ca-certificates tini && \
+    apt-get clean
+
+COPY --from=cargo-build /byos /usr/local/bin/byos
+ENTRYPOINT [ "byos" ]
