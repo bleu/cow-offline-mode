@@ -1,0 +1,38 @@
+node-url = "http://chain:8545"
+simulation-node-url = "http://chain:8545"
+
+[logging]
+filter = "info,autopilot=trace,shared=debug"
+
+[current-block]
+poll-interval = "1s"
+
+[run-loop]
+solve-deadline = "20s"
+
+[[gas-estimators]]
+type = "Web3"
+
+[[drivers]]
+name = "byos"
+url = "http://driver/byos"
+address = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+
+[fee-policies]
+
+[database]
+write-url = "postgres://db:5432/?user=postgres&password=123"
+read-url = "postgres://db:5432/?user=postgres&password=123"
+
+[ethflow]
+contracts = ["0x04501b9b1d52e67f6862d157e00d13419d2d6e95"]
+skip-event-sync = true
+
+[order-quoting]
+price-estimation-drivers = [{ name = "byos", url = "http://driver/byos" }]
+
+[native-price-estimation]
+estimators = [[{ type = "Driver", name = "byos", url = "http://driver/byos" }]]
+
+[native-price-estimation.cache]
+max-age = "20m"

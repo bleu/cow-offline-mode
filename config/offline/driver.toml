@@ -3,8 +3,8 @@ orderbook-url = "http://orderbook"
 tx-gas-limit = "45000000"
 
 [[solver]]
-name = "baseline" # Arbitrary name given to this solver, must be unique
-endpoint = "http://baseline"
+name = "byos" # BYOS (Bring Your Own Solver) engine
+endpoint = "http://byos"
 absolute-slippage = "40000000000000000" # Denominated in wei, optional
 relative-slippage = "0.1" # Percentage in the [0, 1] range
 # Anvil account #0 private key (from test mnemonic)
