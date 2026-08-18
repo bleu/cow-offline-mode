@@ -10,3 +10,6 @@
 [submodule "modules/frontend"]
 	path = modules/frontend
 	url = https://github.com/cowprotocol/cowswap.git
+[submodule "modules/byos-contracts"]
+	path = modules/byos-contracts
+	url = https://github.com/bleu/byos-contracts.git
