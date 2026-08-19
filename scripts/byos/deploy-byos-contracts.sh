@@ -80,7 +80,7 @@ CONSTRUCTOR_ARGS=$(cast abi-encode \
   172800 \
   "$ACCOUNT_2" \
   "$ACCOUNT_1" \
-  "[$ACCOUNT_0]" \
+  "[$ACCOUNT_0,$ACCOUNT_3]" \
   86400 \
   "$GPV2_SETTLEMENT" \
   "BYOS Escrow" \
