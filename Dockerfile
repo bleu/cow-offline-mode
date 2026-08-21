@@ -4,7 +4,7 @@ COPY database/ /flyway/
 CMD ["migrate"]
 
 # Build stage - builds all Rust binaries
-FROM docker.io/rust:1-slim-bookworm AS cargo-build
+FROM docker.io/rust:1.81-slim-bookworm AS cargo-build
 WORKDIR /src/
 
 # Install build dependencies
@@ -62,7 +62,7 @@ COPY --from=cargo-build /solvers /usr/local/bin/solvers
 ENTRYPOINT [ "solvers" ]
 
 # Development target with cargo-watch
-FROM docker.io/rust:1-slim-bookworm AS localdev
+FROM docker.io/rust:1.81-slim-bookworm AS localdev
 WORKDIR /src/
 
 # Install development dependencies
