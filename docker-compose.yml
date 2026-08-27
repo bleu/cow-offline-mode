@@ -180,9 +180,12 @@ services:
       - HOOKS_CONTRACT_ADDRESS=0x60Bf78233f48eC42eE3F101b9a05eC7878728006
       - BASE_TOKENS=${BASE_TOKENS}
     depends_on:
-      - db-migrations
-      - chain
-      - coingecko-mock
+      db-migrations:
+        condition: service_completed_successfully
+      chain:
+        condition: service_healthy
+      coingecko-mock:
+        condition: service_started
     ports:
       - ${PORT_ORDERBOOK:-8080}:80 # API
       - ${PORT_ORDERBOOK_METRICS:-9586}:9586 # metrics

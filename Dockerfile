@@ -19,6 +19,13 @@ RUN rustup install stable && \
 # Copy all source code
 COPY . .
 
+# The contracts build.rs generates src/alloy/ into the source tree (not $OUT_DIR).
+# After a fresh COPY, those files are gone but Cargo's fingerprint cache says the
+# build script is up-to-date and skips re-running it. Clear the cached build artifacts
+# for the contracts crate so the build script always regenerates src/alloy/.
+RUN --mount=type=cache,target=/src/target \
+    rm -rf /src/target/*/build/contracts-* 2>/dev/null || true
+
 # Build all binaries with cache mounts for faster builds
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/src/target \
