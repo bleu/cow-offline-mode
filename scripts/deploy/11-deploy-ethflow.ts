@@ -10,7 +10,10 @@ import { DeploymentConfig } from './types';
 import { printSection } from './utils';
 import { logger, indent } from './logger';
 
-const ETHFLOW_ADDRESS = '0xD02De8Da0B71E1B59489794F423FaBBa2AdC4d93';
+// Must match ETHFLOW_CONTRACTS in offline-mode/.env so the driver/autopilot index orders from this address.
+const ETHFLOW_ADDRESS = process.env.ETHFLOW_CONTRACTS || '0x04501b9b1d52e67f6862d157e00d13419d2d6e95';
+// Source of EthFlow bytecode — the canonical mainnet deployment.
+const ETHFLOW_MAINNET_ADDRESS = '0xD02De8Da0B71E1B59489794F423FaBBa2AdC4d93';
 const MAINNET_RPC = 'https://eth.llamarpc.com';
 
 export async function deployEthFlow(config: DeploymentConfig): Promise<string> {
@@ -18,10 +21,10 @@ export async function deployEthFlow(config: DeploymentConfig): Promise<string> {
 
   logger.debug('EthFlow allows native ETH swaps by wrapping to WETH atomically');
 
-  // Fetch EthFlow bytecode from mainnet
-  logger.debug(indent(`Fetching EthFlow bytecode from mainnet...`));
+  // Fetch EthFlow bytecode from the canonical mainnet deployment
+  logger.debug(indent(`Fetching EthFlow bytecode from mainnet (${ETHFLOW_MAINNET_ADDRESS})...`));
   const bytecode = execSync(
-    `cast code ${ETHFLOW_ADDRESS} --rpc-url ${MAINNET_RPC}`,
+    `cast code ${ETHFLOW_MAINNET_ADDRESS} --rpc-url ${MAINNET_RPC}`,
     { encoding: 'utf8' }
   ).trim();
 
