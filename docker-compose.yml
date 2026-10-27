@@ -40,7 +40,7 @@ services:
           echo "📂 Loading existing blockchain state..."
           # Start Anvil with slow block-time to reduce drift
           # Tests will mine blocks manually when needed
-          anvil --load-state /state/anvil-state.json --host 0.0.0.0 --port 8545 --chain-id 1 --block-time 2 --gas-limit 30000000 --code-size-limit 50000 &
+          anvil --load-state /state/anvil-state.json --host 0.0.0.0 --port 8545 --chain-id 1 --mixed-mining --block-time 2 --gas-limit 30000000 --code-size-limit 50000 &
           ANVIL_PID=$$!
 
           # Wait for Anvil to be ready
